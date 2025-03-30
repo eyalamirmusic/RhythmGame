@@ -17,3 +17,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 #endif
 
 #include "ProcessorBase/ProcessorBase.h"
+#include "BasicSynth/BasicSynth.h"

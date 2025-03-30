@@ -10,9 +10,12 @@ public:
     Processor();
 
 private:
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void processBlock(Buffer&, MidiBuffer&) override;
 
     AudioProcessorEditor* createEditor() override;
+
+    BasicSynth synth;
 };
 
 } // namespace EA::Audio::Plugins::RhythmGame

@@ -6,11 +6,16 @@ namespace EA::Audio::Plugins::RhythmGame
 Processor::Processor()
 {
 }
+void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
+{
+    synth.prepare(sampleRate, samplesPerBlock);
+}
 
 void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 
 {
-    ignoreUnused(midiMessages, buffer);
+    auto noDenormals = juce::ScopedNoDenormals();
+    synth.process(buffer, midiMessages);
 }
 
 AudioProcessorEditor* Processor::createEditor()
