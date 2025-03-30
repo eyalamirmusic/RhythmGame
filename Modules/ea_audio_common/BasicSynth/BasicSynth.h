@@ -16,14 +16,6 @@ struct BasicSynthVoice : VoiceBase
     juce::ADSR adsr;
 };
 
-struct BasicSynth : juce::MPESynthesiser
-{
-    BasicSynth();
+using BasicSynth = MPESynth<BasicSynthVoice>;
 
-    void prepare(int numChannels, double sr, int blockSize);
-    void process(Buffer& buffer, const MidiBuffer& midi) noexcept;
-
-    Buffer voiceBuffer;
-    std::vector<BasicSynthVoice*> synthVoices;
-};
 } // namespace EA::Audio

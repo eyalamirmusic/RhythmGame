@@ -41,28 +41,4 @@ void BasicSynthVoice::prepare(double sr, int)
     adsr.setSampleRate(sr);
 }
 
-BasicSynth::BasicSynth()
-{
-    for (int index = 0; index < 4; ++index)
-    {
-        auto newVoice = new BasicSynthVoice();
-        newVoice->voiceBuffer = &voiceBuffer;
-        synthVoices.emplace_back(newVoice);
-        addVoice(newVoice);
-    }
-}
-
-void BasicSynth::prepare(int numChannels, double sr, int blockSize)
-{
-    voiceBuffer.setSize(numChannels, blockSize);
-    setCurrentPlaybackSampleRate(sr);
-
-    for (auto& voice: synthVoices)
-        voice->prepare(sr, blockSize);
-}
-
-void BasicSynth::process(Buffer& buffer, const MidiBuffer& midi) noexcept
-{
-    renderNextBlock(buffer, midi, 0, buffer.getNumSamples());
-}
 } // namespace EA::Audio
