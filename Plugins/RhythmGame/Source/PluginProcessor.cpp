@@ -8,7 +8,7 @@ Processor::Processor()
 }
 void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-    synth.prepare(sampleRate, samplesPerBlock);
+    synth.prepare(getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
 }
 
 void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
