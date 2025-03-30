@@ -4,6 +4,21 @@
 namespace EA::Audio
 {
 
+void WhiteNoise::processChannel(float* channelData, int numSamples) noexcept
+{
+    for (int sample = 0; sample < numSamples; ++sample)
+    {
+        auto next = random.nextFloat();
+        channelData[sample] = juce::jmap(next, -1.f, 1.f);
+    }
+}
+
+void WhiteNoise::process(Buffer& buffer) noexcept
+{
+    processChannel(buffer.getWritePointer(0), buffer.getNumSamples());
+    Buffers::copyToAllChannels(buffer);
+}
+
 void BasicSynthVoice::noteStarted()
 {
     adsr.noteOn();
@@ -19,15 +34,7 @@ void BasicSynthVoice::noteStopped(bool allowTailOff)
 
 void BasicSynthVoice::process(Buffer& buffer) noexcept
 {
-    auto channelData = buffer.getWritePointer(0);
-
-    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
-    {
-        auto next = random.nextFloat();
-        channelData[sample] = juce::jmap(next, -1.f, 1.f);
-    }
-
-    Buffers::copyToAllChannels(buffer);
+    whiteNoise.process(buffer);
     buffer.applyGain(0.3f);
 
     adsr.applyEnvelopeToBuffer(buffer, 0, buffer.getNumSamples());
