@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shared_plugin_helpers/shared_plugin_helpers.h>
+#include <ea_audio_common/ea_audio_common.h>
 
 namespace EA::Audio::Plugins::RhythmGame
 {

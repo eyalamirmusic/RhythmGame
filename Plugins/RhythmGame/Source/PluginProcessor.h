@@ -10,9 +10,9 @@ public:
     Processor();
 
 private:
-    void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void processBlock(Buffer&, MidiBuffer&) override;
 
-    juce::AudioProcessorEditor* createEditor() override;
+    AudioProcessorEditor* createEditor() override;
 };
 
 } // namespace EA::Audio::Plugins::RhythmGame

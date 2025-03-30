@@ -3,7 +3,7 @@
 namespace EA::Audio
 {
 ProcessorBase::ProcessorBase()
-    : juce::AudioProcessor(getDefaultProperties())
+    : AudioProcessor(getDefaultProperties())
 {
 }
 
@@ -12,7 +12,7 @@ ProcessorBase::ProcessorBase(const BusesProperties& ioLayouts)
 {
 }
 
-const juce::String ProcessorBase::getName() const
+const String ProcessorBase::getName() const
 {
     return JucePlugin_Name;
 }
@@ -51,8 +51,7 @@ double ProcessorBase::getTailLengthSeconds() const
 
 int ProcessorBase::getNumPrograms()
 {
-    return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
-    // so this should be at least 1, even if you're not really implementing programs.
+    return 1;
 }
 
 int ProcessorBase::getCurrentProgram()
@@ -62,33 +61,30 @@ int ProcessorBase::getCurrentProgram()
 
 void ProcessorBase::setCurrentProgram(int index)
 {
-    juce::ignoreUnused(index);
+    ignoreUnused(index);
 }
 
-const juce::String ProcessorBase::getProgramName(int index)
+const String ProcessorBase::getProgramName(int index)
 {
-    juce::ignoreUnused(index);
+    ignoreUnused(index);
     return {};
 }
 
 void ProcessorBase::changeProgramName(int index, const juce::String& newName)
 {
-    juce::ignoreUnused(index, newName);
+    ignoreUnused(index, newName);
 }
 
-//==============================================================================
 void ProcessorBase::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    juce::ignoreUnused(sampleRate, samplesPerBlock);
+    ignoreUnused(sampleRate, samplesPerBlock);
 }
 
 void ProcessorBase::releaseResources()
 {
 }
 
-juce::AudioProcessor::BusesProperties ProcessorBase::getDefaultProperties()
+AudioProcessor::BusesProperties ProcessorBase::getDefaultProperties()
 {
     return BusesProperties()
 #if !JucePlugin_IsMidiEffect
@@ -100,24 +96,21 @@ juce::AudioProcessor::BusesProperties ProcessorBase::getDefaultProperties()
         ;
 }
 
-juce::AudioProcessorEditor* ProcessorBase::createEditor()
+AudioProcessorEditor* ProcessorBase::createEditor()
 {
     return new juce::GenericAudioProcessorEditor(*this);
 }
 
-bool ProcessorBase::isBusesLayoutSupported(
-    const juce::AudioProcessor::BusesLayout& layouts) const
+bool ProcessorBase::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
     if (isMidiEffect())
         return true;
-    else
-    {
-        if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-            && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-            return false;
-    }
 
-    // This checks if the input layout matches the output layout
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+        && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        return false;
+
+// This checks if the input layout matches the output layout
 #if !JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
@@ -125,14 +118,20 @@ bool ProcessorBase::isBusesLayoutSupported(
 
     return true;
 }
-void ProcessorBase::getStateInformation(juce::MemoryBlock& destData)
+
+void ProcessorBase::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(destData);
+    ignoreUnused(buffer, midiMessages);
+}
+
+void ProcessorBase::getStateInformation(MemoryBlock& destData)
+{
+    ignoreUnused(destData);
 }
 
 void ProcessorBase::setStateInformation(const void* data, int sizeInBytes)
 {
-    juce::ignoreUnused(data, sizeInBytes);
+    ignoreUnused(data, sizeInBytes);
 }
 
 } // namespace EA::Audio

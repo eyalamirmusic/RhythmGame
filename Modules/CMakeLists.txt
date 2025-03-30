@@ -1,2 +1,2 @@
-juce_add_modules(shared_plugin_helpers)
+juce_add_modules(ea_audio_common ea_common)
 

@@ -7,14 +7,13 @@ Processor::Processor()
 {
 }
 
-void Processor::processBlock(juce::AudioBuffer<float>& buffer,
-                             juce::MidiBuffer& midiMessages)
+void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 
 {
-    juce::ignoreUnused(midiMessages, buffer);
+    ignoreUnused(midiMessages, buffer);
 }
 
-juce::AudioProcessorEditor* Processor::createEditor()
+AudioProcessorEditor* Processor::createEditor()
 {
     return new GUI::Plugins::RhythmGame::Editor(*this);
 }

@@ -4,17 +4,16 @@
 
 BEGIN_JUCE_MODULE_DECLARATION
 
-      ID:               shared_plugin_helpers
+      ID:               ea_audio_common
       vendor:           Eyal Amir
       version:          0.0.1
-      name:             shared_plugin_helpers
-      description:      Shared plugin helpers
+      name:             ea_audio_common
+      description:      EA Audio Common
       license:          GPL/Commercial
-      dependencies:     juce_audio_utils
+      dependencies:     juce_audio_utils ea_common
 
      END_JUCE_MODULE_DECLARATION
 
 #endif
 
-#include "ProcessorBase/Helpers.h"
 #include "ProcessorBase/ProcessorBase.h"
