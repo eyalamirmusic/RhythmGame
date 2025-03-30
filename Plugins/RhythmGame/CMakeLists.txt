@@ -1,22 +1,23 @@
-project(NewPluginTemplate VERSION 0.0.1)
+project(RhythmGame VERSION 0.0.1)
 
-set (BaseTargetName NewPluginTemplate)
+set (BaseTargetName RhythmGame)
 
 juce_add_plugin("${BaseTargetName}"
         # VERSION ...                               # Set this if the plugin version is different to the project version
         # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
         # ICON_SMALL ...
-        COMPANY_NAME "MyCompany"
-        IS_SYNTH FALSE
+        COMPANY_NAME "Eyal Amir"
+        BUNDLE_ID "com.eyalamir.rhythmgame"
+        IS_SYNTH TRUE
         NEEDS_MIDI_INPUT TRUE
         NEEDS_MIDI_OUTPUT FALSE
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
         COPY_PLUGIN_AFTER_BUILD TRUE
-        PLUGIN_MANUFACTURER_CODE Juce
-        PLUGIN_CODE NPtm
-        FORMATS AU VST3 Standalone
-        PRODUCT_NAME "Audio Plugin Example")
+        PLUGIN_MANUFACTURER_CODE EApl
+        PLUGIN_CODE RYgm
+        FORMATS Standalone
+        PRODUCT_NAME "Rhythm Game")
 
 target_sources(${BaseTargetName} PRIVATE
         Source/PluginProcessor.cpp

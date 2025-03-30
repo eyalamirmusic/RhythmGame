@@ -1,6 +1,6 @@
 #include "ProcessorBase.h"
 
-namespace PluginHelpers
+namespace EA::Audio
 {
 ProcessorBase::ProcessorBase()
     : juce::AudioProcessor(getDefaultProperties())
@@ -135,4 +135,4 @@ void ProcessorBase::setStateInformation(const void* data, int sizeInBytes)
     juce::ignoreUnused(data, sizeInBytes);
 }
 
-} // namespace PluginHelpers
+} // namespace EA::Audio
