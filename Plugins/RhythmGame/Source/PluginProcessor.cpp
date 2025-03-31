@@ -11,6 +11,7 @@ Processor::Processor()
 void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     synth.prepare(getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
+    gain.prepare(sampleRate);
 }
 
 void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
@@ -20,8 +21,7 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 
     synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
     synth.process(buffer, midiMessages);
-
-    buffer.applyGain(volume->get());
+    gain.process(buffer, volume->get());
 }
 
 AudioProcessorEditor* Processor::createEditor()

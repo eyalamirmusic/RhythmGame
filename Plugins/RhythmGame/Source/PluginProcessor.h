@@ -19,6 +19,7 @@ private:
         {"OSC", 1}, "OSC", {"Sine", "Square", "Saw", "Reversed Saw", "Noise"}, 0);
     FloatParam* volume = new FloatParam({"Volume", 1}, "Volume", 0.f, 0.5f, 0.25f);
 
+    SmoothGain gain;
     BasicSynth::Synth synth;
 };
 

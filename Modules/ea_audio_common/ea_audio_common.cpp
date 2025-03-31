@@ -6,3 +6,4 @@
 #include "BasicSynth/Generators.cpp"
 
 #include "Buffers/Buffers.cpp"
+#include "Buffers/SmoothGain.cpp"
