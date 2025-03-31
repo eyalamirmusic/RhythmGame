@@ -21,6 +21,8 @@ void WhiteNoise::process(Buffer& buffer) noexcept
 
 void BasicSynthVoice::noteStarted()
 {
+    osc.reset();
+    adsr.setParameters(shared->adsr);
     adsr.noteOn();
 }
 
@@ -34,7 +36,29 @@ void BasicSynthVoice::noteStopped(bool allowTailOff)
 
 void BasicSynthVoice::process(Buffer& buffer) noexcept
 {
-    whiteNoise.process(buffer);
+    osc.setPitch(getCurrentlyPlayingNote(), getSampleRate());
+
+    auto& oscs = shared->oscs;
+
+    switch (oscs.selected)
+    {
+        case BasicSynthOSCOptions::Sine:
+            osc.process(oscs.sine, buffer);
+            break;
+        case BasicSynthOSCOptions::Square:
+            osc.process(oscs.square, buffer);
+            break;
+        case BasicSynthOSCOptions::Saw:
+            osc.process(oscs.saw, buffer);
+            break;
+        case BasicSynthOSCOptions::ReversedSaw:
+            osc.process(oscs.reversedSaw, buffer);
+            break;
+        case BasicSynthOSCOptions::WhiteNoise:
+            osc.process(oscs.noise, buffer);
+            break;
+    }
+
     buffer.applyGain(0.3f);
 
     adsr.applyEnvelopeToBuffer(buffer, 0, buffer.getNumSamples());

@@ -15,6 +15,10 @@ private:
 
     AudioProcessorEditor* createEditor() override;
 
+    juce::AudioParameterChoice* oscillator = new juce::AudioParameterChoice(
+        {"OSC", 1}, "OSC", {"Sine", "Square", "Saw", "Reversed Saw", "Noise"}, 0);
+
+    BasicSynthShared shared;
     BasicSynth synth;
 };
 
