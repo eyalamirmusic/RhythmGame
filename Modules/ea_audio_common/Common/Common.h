@@ -10,4 +10,9 @@ using juce::AudioProcessor;
 using juce::AudioProcessorEditor;
 using juce::MidiBuffer;
 
+using FloatParam = juce::AudioParameterFloat;
+using ChoiceParam = juce::AudioParameterChoice;
+using BoolParam = juce::AudioParameterBool;
+using IntParam = juce::AudioParameterInt;
+
 } // namespace EA::Audio

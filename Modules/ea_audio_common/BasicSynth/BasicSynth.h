@@ -4,18 +4,10 @@
 #include "Oscillator.h"
 #include "Generators.h"
 
-namespace EA::Audio
+namespace EA::Audio::BasicSynth
 {
 
-struct WhiteNoise
-{
-    void processChannel(float* channelData, int numSamples) noexcept;
-    void process(Buffer& buffer) noexcept;
-
-    juce::Random random;
-};
-
-enum class BasicSynthOSCOptions
+enum class OSCOptions
 {
     Sine,
     Square,
@@ -32,24 +24,18 @@ struct OscillatorList
     Generators::Saw saw;
     Generators::ReverseSaw reversedSaw;
 
-    BasicSynthOSCOptions selected = BasicSynthOSCOptions::Sine;
+    OSCOptions selected = OSCOptions::Sine;
 };
 
 struct BasicSynthShared
 {
-    BasicSynthShared()
-    {
-        adsr.attack = 0.0001f;
-        adsr.decay = 100.f;
-        adsr.sustain = 1.f;
-        adsr.release = 0.001f;
-    }
+    BasicSynthShared();
 
     juce::ADSR::Parameters adsr;
     OscillatorList oscs;
 };
 
-struct BasicSynthVoice : VoiceBase
+struct Voice : VoiceBase
 {
     void noteStarted() override;
     void noteStopped(bool allowTailOff) override;
@@ -62,6 +48,11 @@ struct BasicSynthVoice : VoiceBase
     Oscillator osc;
 };
 
-using BasicSynth = MPESynth<BasicSynthVoice>;
+struct Synth : MPESynth<Voice>
+{
+    Synth();
+
+    BasicSynthShared shared;
+};
 
 } // namespace EA::Audio

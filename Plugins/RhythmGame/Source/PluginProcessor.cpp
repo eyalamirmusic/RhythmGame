@@ -6,9 +6,7 @@ namespace EA::Audio::Plugins::RhythmGame
 Processor::Processor()
 {
     addParameter(oscillator);
-
-    for (auto& voice: synth.synthVoices)
-        voice->shared = &shared;
+    addParameter(volume);
 }
 void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
@@ -20,8 +18,10 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 {
     auto noDenormals = juce::ScopedNoDenormals();
 
-    shared.oscs.selected = (BasicSynthOSCOptions)oscillator->getIndex();
+    synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
     synth.process(buffer, midiMessages);
+
+    buffer.applyGain(volume->get());
 }
 
 AudioProcessorEditor* Processor::createEditor()

@@ -1,32 +1,25 @@
 #include "BasicSynth.h"
 #include "../Buffers/Buffers.h"
 
-namespace EA::Audio
+namespace EA::Audio::BasicSynth
 {
 
-void WhiteNoise::processChannel(float* channelData, int numSamples) noexcept
+BasicSynthShared::BasicSynthShared()
 {
-    for (int sample = 0; sample < numSamples; ++sample)
-    {
-        auto next = random.nextFloat();
-        channelData[sample] = juce::jmap(next, -1.f, 1.f);
-    }
+    adsr.attack = 0.0001f;
+    adsr.decay = 100.f;
+    adsr.sustain = 1.f;
+    adsr.release = 0.001f;
 }
 
-void WhiteNoise::process(Buffer& buffer) noexcept
-{
-    processChannel(buffer.getWritePointer(0), buffer.getNumSamples());
-    Buffers::copyToAllChannels(buffer);
-}
-
-void BasicSynthVoice::noteStarted()
+void Voice::noteStarted()
 {
     osc.reset();
     adsr.setParameters(shared->adsr);
     adsr.noteOn();
 }
 
-void BasicSynthVoice::noteStopped(bool allowTailOff)
+void Voice::noteStopped(bool allowTailOff)
 {
     adsr.noteOff();
 
@@ -34,7 +27,7 @@ void BasicSynthVoice::noteStopped(bool allowTailOff)
         clearCurrentNote();
 }
 
-void BasicSynthVoice::process(Buffer& buffer) noexcept
+void Voice::process(Buffer& buffer) noexcept
 {
     osc.setPitch(getCurrentlyPlayingNote(), getSampleRate());
 
@@ -42,24 +35,26 @@ void BasicSynthVoice::process(Buffer& buffer) noexcept
 
     switch (oscs.selected)
     {
-        case BasicSynthOSCOptions::Sine:
+        case OSCOptions::Sine:
             osc.process(oscs.sine, buffer);
             break;
-        case BasicSynthOSCOptions::Square:
+
+        case OSCOptions::Square:
             osc.process(oscs.square, buffer);
             break;
-        case BasicSynthOSCOptions::Saw:
+
+        case OSCOptions::Saw:
             osc.process(oscs.saw, buffer);
             break;
-        case BasicSynthOSCOptions::ReversedSaw:
+
+        case OSCOptions::ReversedSaw:
             osc.process(oscs.reversedSaw, buffer);
             break;
-        case BasicSynthOSCOptions::WhiteNoise:
+
+        case OSCOptions::WhiteNoise:
             osc.process(oscs.noise, buffer);
             break;
     }
-
-    buffer.applyGain(0.3f);
 
     adsr.applyEnvelopeToBuffer(buffer, 0, buffer.getNumSamples());
 
@@ -67,9 +62,14 @@ void BasicSynthVoice::process(Buffer& buffer) noexcept
         clearCurrentNote();
 }
 
-void BasicSynthVoice::prepare(double sr, int)
+void Voice::prepare(double sr, int)
 {
     adsr.setSampleRate(sr);
 }
 
-} // namespace EA::Audio
+Synth::Synth()
+{
+    for (auto& voice: synthVoices)
+        voice->shared = &shared;
+}
+} // namespace EA::Audio::BasicSynth
