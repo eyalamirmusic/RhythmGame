@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-
-project(JUCECMakeRepo)
+project(RhythmGame)
 
 #First, we'll add the CMake folder, incase we'll need to find_package later:
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
