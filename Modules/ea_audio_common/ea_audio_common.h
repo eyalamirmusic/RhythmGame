@@ -19,3 +19,5 @@ BEGIN_JUCE_MODULE_DECLARATION
 #include "ProcessorBase/ProcessorBase.h"
 #include "BasicSynth/BasicSynth.h"
 #include "Buffers/SmoothGain.h"
+
+#include "MIDIPlayer/MIDIPlayer.h"
