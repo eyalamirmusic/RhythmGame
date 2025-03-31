@@ -23,7 +23,7 @@ float Square::getY(float x) noexcept
     if (x > 0.5f)
         return 1.f;
 
-    return 0.f;
+    return -1.f;
 }
 
 float WhiteNoise::getY(float) noexcept

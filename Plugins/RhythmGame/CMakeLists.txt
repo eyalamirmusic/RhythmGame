@@ -16,7 +16,7 @@ juce_add_plugin("${BaseTargetName}"
         COPY_PLUGIN_AFTER_BUILD TRUE
         PLUGIN_MANUFACTURER_CODE EApl
         PLUGIN_CODE RYgm
-        FORMATS Standalone
+        FORMATS Standalone VST3
         PRODUCT_NAME "Rhythm Game")
 
 target_sources(${BaseTargetName} PRIVATE

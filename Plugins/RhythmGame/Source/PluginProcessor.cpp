@@ -18,6 +18,7 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 
 {
     auto noDenormals = juce::ScopedNoDenormals();
+    buffer.clear();
 
     synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
     synth.process(buffer, midiMessages);
