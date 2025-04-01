@@ -12,6 +12,7 @@ void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     synth.prepare(getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
     gain.prepare(sampleRate);
+    transport.prepare(sampleRate, samplesPerBlock);
 }
 
 void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
@@ -19,6 +20,10 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 {
     auto noDenormals = juce::ScopedNoDenormals();
     buffer.clear();
+    midiMessages.clear();
+
+    transport.process(getPlayHead(), buffer.getNumSamples());
+    player.process(midiMessages, transport);
 
     synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
     synth.process(buffer, midiMessages);

@@ -10,7 +10,7 @@ BEGIN_JUCE_MODULE_DECLARATION
       name:             ea_audio_common
       description:      EA Common
       license:          GPL/Commercial
-      dependencies:     juce_core juce_events
+      dependencies:     juce_core juce_events ea_data_structures
 
      END_JUCE_MODULE_DECLARATION
 

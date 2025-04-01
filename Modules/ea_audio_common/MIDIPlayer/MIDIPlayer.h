@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../Common/Common.h"
+#include "Transport.h"
 
 namespace EA::MIDI
 {
+using juce::MidiBuffer;
 using juce::MidiMessage;
 using juce::MidiMessageSequence;
 
@@ -34,6 +35,8 @@ struct Note
 
 struct TimeRange
 {
+    double getEnd() const noexcept { return start + length; }
+
     double start = 0.0;
     double length = 0.0;
 };
@@ -73,7 +76,7 @@ struct Sequence
         }
     }
 
-    std::vector<TimedNote> notes;
+    Vector<TimedNote> notes;
 };
 
 struct Player
@@ -90,10 +93,31 @@ struct Player
             auto sequence = Sequence(*midiFile.getTrack(track), midiFile.getTimeFormat());
 
             if (!sequence.notes.empty())
-                sequences.push_back(sequence);
+                sequences.add(sequence);
         }
     }
 
-    std::vector<Sequence> sequences;
+    void process(MidiBuffer& midi, const Audio::Transport& transport)
+    {
+        for (int sample = 0; sample < transport.getNumSamples(); ++sample)
+        {
+            auto pos = transport.positions[sample];
+
+            for (auto& sequence: sequences)
+            {
+                for (auto& note: sequence.notes)
+                {
+                    auto& time = note.time;
+
+                    if (pos.contains(time.start))
+                        midi.addEvent(note.note.toNoteOn(), sample);
+                    else if (pos.contains(time.getEnd()))
+                        midi.addEvent(note.note.toNoteOff(), sample);
+                }
+            }
+        }
+    }
+
+    Vector<Sequence> sequences;
 };
 } // namespace EA::MIDI

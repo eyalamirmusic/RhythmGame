@@ -21,3 +21,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 #include "Buffers/SmoothGain.h"
 
 #include "MIDIPlayer/MIDIPlayer.h"
+#include "MIDIPlayer/Transport.h"

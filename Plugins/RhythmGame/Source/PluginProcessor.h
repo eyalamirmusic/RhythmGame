@@ -21,6 +21,8 @@ private:
 
     SmoothGain gain;
     BasicSynth::Synth synth;
+    Transport transport;
+    MIDI::Player player {Files::getDesktop() / "MIDI" / "bwv772.mid"};
 };
 
 } // namespace EA::Audio::Plugins::RhythmGame
