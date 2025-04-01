@@ -55,6 +55,7 @@ struct Player
 
     void process(MidiBuffer& midi, const Audio::Transport& transport);
 
+    double sequenceTime = 0.0;
     Vector<Sequence> sequences;
 
     Vector<TimedNote> playingNotes;

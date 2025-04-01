@@ -51,8 +51,12 @@ Player::Player(const File& file)
 
     auto midiFile = juce::MidiFile();
 
+
     if (auto stream = file.createInputStream())
+    {
         midiFile.readFrom(*stream);
+        sequenceTime = midiFile.getLastTimestamp() / midiFile.getTimeFormat();
+    }
 
     for (int track = 0; track < midiFile.getNumTracks(); ++track)
     {
