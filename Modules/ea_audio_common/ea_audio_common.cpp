@@ -10,5 +10,4 @@
 #include "Buffers/SmoothGain.cpp"
 
 #include "Sequencer/Transport.cpp"
-#include "Sequencer/Sequencer.cpp"
 

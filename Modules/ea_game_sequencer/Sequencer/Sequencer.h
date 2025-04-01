@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Transport.h"
+#include <ea_audio_common/ea_audio_common.h>
 
 namespace EA::Sequencer
 {

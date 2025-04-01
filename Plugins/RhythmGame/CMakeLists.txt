@@ -30,7 +30,7 @@ target_compile_definitions(${BaseTargetName}
         JUCE_VST3_CAN_REPLACE_VST2=0)
 
 target_link_libraries(${BaseTargetName} PRIVATE
-        ea_audio_common
+        ea_game_sequencer
         juce_recommended_config_flags
         juce_recommended_lto_flags
         juce_recommended_warning_flags)
