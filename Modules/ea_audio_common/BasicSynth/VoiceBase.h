@@ -45,7 +45,7 @@ struct MPESynth : juce::MPESynthesiser
         setCurrentPlaybackSampleRate(sr);
 
         for (auto& voice: synthVoices)
-            voice->prepare(sr, blockSize);
+            voice->prepare(numChannels, sr, blockSize);
     }
 
     Buffer voiceBuffer;

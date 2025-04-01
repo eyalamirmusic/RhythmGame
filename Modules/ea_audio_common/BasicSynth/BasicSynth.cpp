@@ -56,15 +56,17 @@ void Voice::process(Buffer& buffer) noexcept
             break;
     }
 
+    filter.process(buffer, shared->filter.cutoff, shared->filter.reso);
     adsr.applyEnvelopeToBuffer(buffer, 0, buffer.getNumSamples());
 
     if (!adsr.isActive())
         clearCurrentNote();
 }
 
-void Voice::prepare(double sr, int)
+void Voice::prepare(int numChannels, double sr, int block)
 {
     adsr.setSampleRate(sr);
+    filter.prepare(numChannels, sr, block);
 }
 
 Synth::Synth()

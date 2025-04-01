@@ -7,7 +7,10 @@ Processor::Processor()
 {
     addParameter(oscillator);
     addParameter(volume);
+    addParameter(cutoff);
+    addParameter(reso);
 }
+
 void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     synth.prepare(getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
@@ -25,6 +28,8 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     transport.process(getPlayHead(), buffer.getNumSamples());
     player.process(midiMessages, transport);
 
+    synth.shared.filter.cutoff = cutoff->get();
+    synth.shared.filter.reso = reso->get();
     synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
     synth.process(buffer, midiMessages);
     gain.process(buffer, volume->get());
