@@ -7,3 +7,6 @@
 
 #include "Buffers/Buffers.cpp"
 #include "Buffers/SmoothGain.cpp"
+
+#include "MIDIPlayer/Transport.cpp"
+#include "MIDIPlayer/MIDIPlayer.cpp"
