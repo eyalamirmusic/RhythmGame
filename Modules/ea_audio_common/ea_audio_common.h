@@ -20,5 +20,5 @@ BEGIN_JUCE_MODULE_DECLARATION
 #include "BasicSynth/BasicSynth.h"
 #include "Buffers/SmoothGain.h"
 
-#include "MIDIPlayer/MIDIPlayer.h"
-#include "MIDIPlayer/Transport.h"
+#include "Sequencer/Sequencer.h"
+#include "Sequencer/Transport.h"

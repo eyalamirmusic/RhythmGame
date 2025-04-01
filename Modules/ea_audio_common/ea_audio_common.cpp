@@ -8,5 +8,5 @@
 #include "Buffers/Buffers.cpp"
 #include "Buffers/SmoothGain.cpp"
 
-#include "MIDIPlayer/Transport.cpp"
-#include "MIDIPlayer/MIDIPlayer.cpp"
+#include "Sequencer/Transport.cpp"
+#include "Sequencer/Sequencer.cpp"
