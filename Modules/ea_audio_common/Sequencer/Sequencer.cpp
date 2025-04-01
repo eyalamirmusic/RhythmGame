@@ -47,6 +47,8 @@ Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat)
 
 Player::Player(const File& file)
 {
+    playingNotes.reserve(100);
+
     auto midiFile = juce::MidiFile();
 
     if (auto stream = file.createInputStream())
@@ -62,9 +64,31 @@ Player::Player(const File& file)
 }
 void Player::process(MidiBuffer& midi, const Audio::Transport& transport)
 {
+    if (!transport.playing)
+    {
+        for (auto& note: playingNotes)
+            midi.addEvent(note.note.toNoteOff(), 0);
+
+        playingNotes.clear();
+
+        return;
+        ;
+    }
+
     for (int sample = 0; sample < transport.getNumSamples(); ++sample)
     {
         auto pos = transport.positions[sample];
+
+        for (int index = playingNotes.getLastElementIndex(); index >= 0; --index)
+        {
+            auto& note = playingNotes[index];
+
+            if (!note.time.intersects(pos))
+            {
+                midi.addEvent(note.note.toNoteOff(), 0);
+                playingNotes.removeAt(index);
+            }
+        }
 
         for (auto& sequence: sequences)
         {
@@ -73,11 +97,12 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport)
                 auto& time = note.time;
 
                 if (pos.contains(time.start))
+                {
+                    playingNotes.add(note);
                     midi.addEvent(note.note.toNoteOn(), sample);
-                else if (pos.contains(time.getEnd()))
-                    midi.addEvent(note.note.toNoteOff(), sample);
+                }
             }
         }
     }
 }
-} // namespace EA::MIDI
+} // namespace EA::Sequencer
