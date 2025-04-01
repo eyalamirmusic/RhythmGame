@@ -17,7 +17,9 @@ BEGIN_JUCE_MODULE_DECLARATION
 #endif
 
 #include "ProcessorBase/ProcessorBase.h"
+#include "ProcessorBase/PluginHelpers.h"
 #include "BasicSynth/BasicSynth.h"
+
 #include "Buffers/SmoothGain.h"
 
 #include "Sequencer/Transport.h"

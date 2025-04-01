@@ -5,10 +5,7 @@ namespace EA::Audio::Plugins::RhythmGame
 {
 Processor::Processor()
 {
-    addParameter(oscillator);
-    addParameter(volume);
-    addParameter(cutoff);
-    addParameter(reso);
+    params.addTo(*this);
 }
 
 void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
@@ -29,11 +26,11 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     transport.process(getActivePlayhead(), buffer.getNumSamples());
     player.process(midiMessages, transport);
 
-    synth.shared.filter.cutoff = cutoff->get();
-    synth.shared.filter.reso = reso->get();
-    synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
+    synth.shared.filter.cutoff = params.cutoff->get();
+    synth.shared.filter.reso = params.reso->get();
+    synth.shared.oscs.selected = (BasicSynth::OSCOptions) params.oscillator->getIndex();
     synth.process(buffer, midiMessages);
-    gain.process(buffer, volume->get());
+    gain.process(buffer, params.volume->get());
 }
 
 juce::AudioPlayHead* Processor::getActivePlayhead() const

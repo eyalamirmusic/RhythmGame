@@ -1,4 +1,5 @@
 #include "ProcessorBase/ProcessorBase.cpp"
+#include "ProcessorBase/PluginHelpers.cpp"
 
 #include "BasicSynth/Oscillator.cpp"
 #include "BasicSynth/BasicSynth.cpp"
