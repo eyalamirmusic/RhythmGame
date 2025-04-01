@@ -13,6 +13,8 @@ private:
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void processBlock(Buffer&, MidiBuffer&) override;
 
+    juce::AudioPlayHead* getActivePlayhead() const;
+
     AudioProcessorEditor* createEditor() override;
 
     ChoiceParam* oscillator = new ChoiceParam(

@@ -72,7 +72,6 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport)
         playingNotes.clear();
 
         return;
-        ;
     }
 
     for (int sample = 0; sample < transport.getNumSamples(); ++sample)

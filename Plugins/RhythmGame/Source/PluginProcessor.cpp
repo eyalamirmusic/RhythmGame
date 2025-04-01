@@ -16,6 +16,7 @@ void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
     synth.prepare(getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
     gain.prepare(sampleRate);
     transport.prepare(sampleRate, samplesPerBlock);
+    transport.playing = true;
 }
 
 void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
@@ -25,7 +26,7 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     buffer.clear();
     midiMessages.clear();
 
-    transport.process(getPlayHead(), buffer.getNumSamples());
+    transport.process(getActivePlayhead(), buffer.getNumSamples());
     player.process(midiMessages, transport);
 
     synth.shared.filter.cutoff = cutoff->get();
@@ -33,6 +34,14 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     synth.shared.oscs.selected = (BasicSynth::OSCOptions) oscillator->getIndex();
     synth.process(buffer, midiMessages);
     gain.process(buffer, volume->get());
+}
+
+juce::AudioPlayHead* Processor::getActivePlayhead() const
+{
+    if (Platform::isStandalone())
+        return nullptr;
+
+    return getPlayHead();
 }
 
 AudioProcessorEditor* Processor::createEditor()

@@ -16,5 +16,5 @@ BEGIN_JUCE_MODULE_DECLARATION
 
 #endif
 
-#include "Common/Common.h"
+#include "Common/Platform.h"
 #include "Files/Files.h"
