@@ -46,6 +46,7 @@ struct Sequence
     Sequence() = default;
     Sequence(const MidiMessageSequence& seq, double timeFormat);
 
+    std::atomic<double> pos = 0.0;
     Vector<TimedNote> notes;
 };
 
@@ -53,11 +54,11 @@ struct Player
 {
     Player(const File& file);
 
-    void process(MidiBuffer& midi, const Audio::Transport& transport);
+    void process(MidiBuffer& midi, const Audio::Transport& transport) noexcept;
+
 
     double sequenceTime = 0.0;
-    Vector<Sequence> sequences;
-
+    OwnedVector<Sequence> sequences;
     Vector<TimedNote> playingNotes;
 };
 } // namespace EA::Sequencer

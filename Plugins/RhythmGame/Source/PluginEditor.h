@@ -12,10 +12,13 @@ public:
     explicit Editor(DSP::Processor& processorToUse);
 
 private:
-    void paint(juce::Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
 
-    juce::GenericAudioProcessorEditor editor {processor};
+    DSP::Processor& plugin;
+    SequenceDisplay seq {*plugin.player.sequences[0]};
+
+    // juce::GenericAudioProcessorEditor editor {processor};
 };
 
 } // namespace EA::GUI::Plugins::RhythmGame

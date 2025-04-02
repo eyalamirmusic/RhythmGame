@@ -10,7 +10,6 @@ class Processor : public ProcessorBase
 public:
     Processor();
 
-private:
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void processBlock(Buffer&, MidiBuffer&) override;
 

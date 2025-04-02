@@ -24,6 +24,7 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     midiMessages.clear();
 
     transport.process(getActivePlayhead(), buffer.getNumSamples());
+
     player.process(midiMessages, transport);
 
     synth.shared.filter.cutoff = params.cutoff->get();

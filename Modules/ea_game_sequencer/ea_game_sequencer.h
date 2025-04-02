@@ -17,3 +17,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 #endif
 
 #include "Sequencer/Sequencer.h"
+#include "Display/SequenceDisplay.h"

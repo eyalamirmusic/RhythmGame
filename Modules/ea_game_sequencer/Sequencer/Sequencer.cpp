@@ -51,7 +51,6 @@ Player::Player(const File& file)
 
     auto midiFile = juce::MidiFile();
 
-
     if (auto stream = file.createInputStream())
     {
         midiFile.readFrom(*stream);
@@ -60,13 +59,14 @@ Player::Player(const File& file)
 
     for (int track = 0; track < midiFile.getNumTracks(); ++track)
     {
-        auto sequence = Sequence(*midiFile.getTrack(track), midiFile.getTimeFormat());
+        auto sequence = makeOwned<Sequence>(*midiFile.getTrack(track), midiFile.getTimeFormat());
 
-        if (!sequence.notes.empty())
-            sequences.add(sequence);
+        if (!sequence->notes.empty())
+            sequences.add(std::move(sequence));
     }
 }
-void Player::process(MidiBuffer& midi, const Audio::Transport& transport)
+
+void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexcept
 {
     if (!transport.playing)
     {
@@ -95,7 +95,7 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport)
 
         for (auto& sequence: sequences)
         {
-            for (auto& note: sequence.notes)
+            for (auto& note: sequence->notes)
             {
                 auto& time = note.time;
 
@@ -105,6 +105,8 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport)
                     midi.addEvent(note.note.toNoteOn(), sample);
                 }
             }
+
+            sequence->pos.store(pos.getEnd() / sequenceTime);
         }
     }
 }

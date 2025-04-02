@@ -17,4 +17,5 @@ BEGIN_JUCE_MODULE_DECLARATION
 #endif
 
 #include "Common/Platform.h"
+#include "Events/Timer.h"
 #include "Files/Files.h"
