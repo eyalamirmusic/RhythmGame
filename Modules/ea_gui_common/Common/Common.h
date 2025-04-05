@@ -13,6 +13,7 @@ using juce::Path;
 using juce::Point;
 using juce::Rectangle;
 using juce::AffineTransform;
+using juce::Viewport;
 namespace Colours = juce::Colours;
 }
 

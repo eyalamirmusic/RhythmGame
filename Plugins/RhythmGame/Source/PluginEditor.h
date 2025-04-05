@@ -17,7 +17,7 @@ private:
 
     DSP::Processor& plugin;
     juce::GenericAudioProcessorEditor genericEditor {plugin};
-    SequenceDisplay seq {*plugin.player.sequences[0]};
+    ScrollingSequences seq {plugin.player};
 
     // juce::GenericAudioProcessorEditor editor {processor};
 };

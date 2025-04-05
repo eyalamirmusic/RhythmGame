@@ -10,21 +10,11 @@ struct Playhead : Component
     void paint(Graphics& g) override { g.fillAll(Colours::white); }
 };
 
-
-
 struct SequenceDisplay : Component
 {
     SequenceDisplay(Sequencer::Sequence& seqToUse)
         : seq(seqToUse)
     {
-        addAndMakeVisible(ph);
-    }
-
-    void update()
-    {
-        auto x = (float) seq.pos.load();
-        Scaling::scale(ph, {x, 0.f, 0.01f, 1.f});
-        repaint();
     }
 
     void paint(Graphics& g) override
@@ -37,7 +27,7 @@ struct SequenceDisplay : Component
 
             auto x = float(time.start / seq.time);
             auto w = float(time.length / seq.time);
-            auto y = (float)note->noteNum / 128.f;
+            auto y = (float) note->noteNum / 128.f;
             auto h = 1.f / 128.f;
 
             auto scaledRect = Scaling::scaleRect(bounds, {x, y, w, h});
@@ -51,7 +41,53 @@ struct SequenceDisplay : Component
     }
 
     Sequencer::Sequence& seq;
-    Playhead ph;
+};
+
+struct ScrollingSequence : Component
+{
+    ScrollingSequence(Sequencer::Sequence& seqToUse)
+        : seq(seqToUse)
+    {
+        viewPort.setViewedComponent(&display, false);
+        viewPort.setScrollBarsShown(false, false);
+        addAndMakeVisible(viewPort);
+    }
+
+    void resized() override
+    {
+        auto numBars = int(std::ceil(seq.time / 4.0));
+        display.setBounds(0, 0, getWidth() * numBars, getHeight());
+        viewPort.setBounds(getLocalBounds());
+    }
+
+    void update()
+    {
+        auto pos = seq.pos.load();
+        auto x = pos * (float) display.getBounds().getWidth();
+
+        viewPort.setViewPosition((int) x, 0);
+    }
+
+    Sequencer::Sequence& seq;
+    SequenceDisplay display {seq};
+    Viewport viewPort;
+
     Events::Timer timer {[&] { update(); }};
+};
+
+struct ScrollingSequences : Component
+{
+    ScrollingSequences(Sequencer::Player& playerToUse)
+    {
+        for (auto& sequence: playerToUse.sequences)
+        {
+            sequences.createNew(*sequence);
+            addAndMakeVisible(sequences.back());
+        }
+    }
+
+    void resized() override { Scaling::resizeVertically(*this); }
+
+    OwnedVector<ScrollingSequence> sequences;
 };
 } // namespace EA::GUI

@@ -70,4 +70,16 @@ void scale(Component& comp, const Rectangle<float>& boundsRatio)
         scale(comp, parentBounds, boundsRatio);
     }
 }
+
+void resizeVertically(Component& comp)
+{
+    auto y = 0.f;
+    auto width = 1.f / (float) comp.getChildren().size();
+
+    for (auto& child: comp.getChildren())
+    {
+        scale(*child, {0.f, y, 1.f, width});
+        y += width;
+    }
+}
 } // namespace EA::GUI::Scaling
