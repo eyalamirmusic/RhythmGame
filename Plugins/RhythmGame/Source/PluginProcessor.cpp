@@ -12,6 +12,7 @@ void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     synth.prepare(getTotalNumOutputChannels(), sampleRate, samplesPerBlock);
     gain.prepare(sampleRate);
+    transport.bpm = 200.0;
     transport.prepare(sampleRate, samplesPerBlock);
     transport.playing = true;
 }

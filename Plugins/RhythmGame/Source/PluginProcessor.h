@@ -22,7 +22,7 @@ public:
     SmoothGain gain;
     BasicSynth::Synth synth;
     Transport transport;
-    Sequencer::Player player {Files::getDesktop() / "MIDI" / "bwv772.mid"};
+    Sequencer::Player player {Files::getDesktop() / "MIDI" / "rush_e_real.mid"};
 };
 
 } // namespace EA::Audio::Plugins::RhythmGame

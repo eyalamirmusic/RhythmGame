@@ -69,7 +69,8 @@ juce::Range<int> Sequence::getNoteRange() const
 
 Player::Player(const File& file)
 {
-    playingNotes.reserve(100);
+    playingNotes.reserve(1000);
+    possibleNotes.reserve(1000);
 
     auto midiFile = juce::MidiFile();
 
@@ -101,6 +102,19 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
         return;
     }
 
+    auto fullRange = transport.getRange();
+
+    possibleNotes.clear();
+
+    for (auto& seq: sequences)
+    {
+        for (auto& note: seq->notes)
+        {
+            if (note->time.intersects(fullRange))
+                possibleNotes.add(note);
+        }
+    }
+
     for (int sample = 0; sample < transport.getNumSamples(); ++sample)
     {
         auto pos = transport.positions[sample];
@@ -117,22 +131,20 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
             }
         }
 
-        for (auto& sequence: sequences)
+        for (auto& note: possibleNotes)
         {
-            for (auto& note: sequence->notes)
+            auto& time = note->time;
+
+            if (pos.contains(time.start))
             {
-                auto& time = note->time;
-
-                if (pos.contains(time.start))
-                {
-                    note->playing.store(true);
-                    playingNotes.add(note);
-                    midi.addEvent(note->note.toNoteOn(), sample);
-                }
+                note->playing.store(true);
+                playingNotes.add(note);
+                midi.addEvent(note->note.toNoteOn(), sample);
             }
-
-            sequence->pos.store(pos.getEnd() / sequenceTime);
         }
     }
+
+    for (auto& seq: sequences)
+        seq->pos.store(fullRange.getEnd() / sequenceTime);
 }
 } // namespace EA::Sequencer

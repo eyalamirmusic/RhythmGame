@@ -52,6 +52,11 @@ void Transport::process(const juce::AudioPlayHead* ph, int numSamples) noexcept
     process(numSamples);
 }
 
+Transport::Range Transport::getRange() const noexcept
+{
+    return {positions[0].getStart(), positions.back().getEnd()};
+}
+
 int Transport::getNumSamples() const noexcept
 {
     return positions.size();

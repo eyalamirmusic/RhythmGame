@@ -66,5 +66,6 @@ struct Player
     double sequenceTime = 0.0;
     OwnedVector<Sequence> sequences;
     Vector<std::shared_ptr<TimedNote>> playingNotes;
+    Vector<std::shared_ptr<TimedNote>> possibleNotes;
 };
 } // namespace EA::Sequencer
