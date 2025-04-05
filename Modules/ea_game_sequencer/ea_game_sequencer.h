@@ -10,7 +10,7 @@ BEGIN_JUCE_MODULE_DECLARATION
       name:             ea_game_sequencer
       description:      ea_game_sequencer
       license:          GPL/Commercial
-      dependencies:     ea_audio_common
+      dependencies:     ea_audio_common ea_gui_common
 
      END_JUCE_MODULE_DECLARATION
 
