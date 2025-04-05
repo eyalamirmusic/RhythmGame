@@ -10,11 +10,44 @@ struct Playhead : Component
     void paint(Graphics& g) override { g.fillAll(Colours::white); }
 };
 
+struct StructDisplayInfo
+{
+    StructDisplayInfo() = default;
+    StructDisplayInfo(Sequencer::TimedNote& noteToUse, const Sequencer::Sequence& seq)
+        : note(&noteToUse)
+    {
+        auto& time = note->time;
+
+        auto x = float(time.start / seq.time);
+        auto w = float(time.length / seq.time);
+
+        auto range = seq.getNoteRange();
+        auto rangeLength = (float) range.getLength();
+
+        auto y = float(note->note.noteNum - range.getStart()) / rangeLength;
+        auto h = 1.f / rangeLength;
+        y = 1.f - y - h;
+
+        rect = {x, y, w, h};
+    }
+
+    void scaleTo(const Rectangle<float>& target)
+    {
+        scaledRect = Scaling::scaleRect(target, rect);
+    }
+
+    Sequencer::TimedNote* note = nullptr;
+    Rectangle<float> rect;
+    Rectangle<float> scaledRect;
+};
+
 struct SequenceDisplay : Component
 {
     SequenceDisplay(Sequencer::Sequence& seqToUse)
         : seq(seqToUse)
     {
+        for (auto& note: seq.notes)
+            notes.create(*note, seq);
     }
 
     static Colour getNoteColor(const Sequencer::TimedNote& note)
@@ -25,35 +58,31 @@ struct SequenceDisplay : Component
         return Colours::blue;
     }
 
+    void resized() override
+    {
+        for (auto& note: notes)
+            note.scaleTo(getLocalBounds().toFloat());
+    }
+
     void paint(Graphics& g) override
     {
-        auto bounds = getLocalBounds().toFloat();
+        auto bounds = g.getClipBounds().toFloat();
 
-        for (auto& note: seq.notes)
+        for (auto& note: notes)
         {
-            auto& time = note->time;
+            if (note.scaledRect.intersects(bounds))
+            {
+                g.setColour(getNoteColor(*note.note));
+                g.fillRect(note.scaledRect);
 
-            auto x = float(time.start / seq.time);
-            auto w = float(time.length / seq.time);
-
-            auto range = seq.getNoteRange();
-            auto rangeLength = (float) range.getLength();
-
-            auto y = float(note->note.noteNum - range.getStart()) / rangeLength;
-            auto h = 1.f / rangeLength;
-            y = 1.f - y - h;
-
-            auto scaledRect = Scaling::scaleRect(bounds, {x, y, w, h});
-
-            g.setColour(getNoteColor(*note));
-            g.fillRect(scaledRect);
-
-            g.setColour(Colours::white);
-            g.drawRect(scaledRect);
+                g.setColour(Colours::white);
+                g.drawRect(note.scaledRect);
+            }
         }
     }
 
     Sequencer::Sequence& seq;
+    Vector<StructDisplayInfo> notes;
     Events::Timer timer {[&] { repaint(); }};
 };
 
@@ -82,7 +111,7 @@ struct ScrollingSequence : Component
         auto pos = seq.pos.load();
         auto width = display.getBounds().getWidth();
         auto x = pos * (float) width;
-        x -= (float)getWidth() / 2.f;
+        x -= (float) getWidth() / 2.f;
 
         viewPort.setViewPosition((int) x, 0);
     }
