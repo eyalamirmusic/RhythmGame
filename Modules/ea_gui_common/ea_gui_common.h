@@ -17,3 +17,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 #endif
 
 #include "Layout/Scaling.h"
+#include "Windows/DefaultWindow.h"

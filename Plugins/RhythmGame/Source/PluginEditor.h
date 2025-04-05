@@ -16,7 +16,8 @@ private:
     void resized() override;
 
     DSP::Processor& plugin;
-    juce::GenericAudioProcessorEditor genericEditor {plugin};
+
+    BasicWindow<juce::GenericAudioProcessorEditor> genericEditor {"Controls", plugin};
     ScrollingSequences seq {plugin.player};
 
     // juce::GenericAudioProcessorEditor editor {processor};

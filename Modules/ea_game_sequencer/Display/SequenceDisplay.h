@@ -54,6 +54,7 @@ struct SequenceDisplay : Component
     }
 
     Sequencer::Sequence& seq;
+    Events::Timer timer {[&] { repaint(); }};
 };
 
 struct ScrollingSequence : Component
@@ -68,9 +69,12 @@ struct ScrollingSequence : Component
 
     void resized() override
     {
+        viewPort.setScrollBarsShown(false, false);
         auto numBars = int(std::ceil(seq.time / 4.0));
         display.setBounds(0, 0, getWidth() * numBars, getHeight());
         viewPort.setBounds(getLocalBounds());
+
+        update();
     }
 
     void update()
