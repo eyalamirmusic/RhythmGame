@@ -16,6 +16,7 @@ private:
     void resized() override;
 
     DSP::Processor& plugin;
+    juce::GenericAudioProcessorEditor genericEditor {plugin};
     SequenceDisplay seq {*plugin.player.sequences[0]};
 
     // juce::GenericAudioProcessorEditor editor {processor};

@@ -8,6 +8,7 @@ Editor::Editor(DSP::Processor& processorToUse)
     , plugin(processorToUse)
 {
     addAndMakeVisible(seq);
+    addAndMakeVisible(genericEditor);
     setSize(400, 300);
 }
 
@@ -18,6 +19,7 @@ void Editor::paint(Graphics& g)
 
 void Editor::resized()
 {
-    seq.setBounds(getLocalBounds());
+    genericEditor.setBoundsRelative(0.f, 0.f, 1.f, 0.5f);
+    seq.setBoundsRelative(0.f, 0.5f, 1.f, 0.5f);
 }
 } // namespace EA::GUI::Plugins::RhythmGame
