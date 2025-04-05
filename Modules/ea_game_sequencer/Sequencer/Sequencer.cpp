@@ -133,9 +133,7 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
 
         for (auto& note: possibleNotes)
         {
-            auto& time = note->time;
-
-            if (pos.contains(time.start))
+            if (!note->playing.load() && pos.intersects(note->time))
             {
                 note->playing.store(true);
                 playingNotes.add(note);
