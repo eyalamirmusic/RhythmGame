@@ -62,4 +62,14 @@ void copyToAllChannels(Buffer& buffer, int sourceChannel) noexcept
         }
     }
 }
+void clip(Buffer& buffer, float level) noexcept
+{
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+    {
+        auto target = buffer.getWritePointer(channel);
+
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+            target[sample] = juce::jlimit(-level, level, target[sample]);
+    }
+}
 } // namespace EA::Audio::Buffers

@@ -37,6 +37,8 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     synth.shared.oscs.selected = (BasicSynth::OSCOptions) params.oscillator->getIndex();
     synth.process(buffer, midiMessages);
     gain.process(buffer, params.volume->get());
+
+    Buffers::clip(buffer);
 }
 
 juce::AudioPlayHead* Processor::getActivePlayhead() const
