@@ -11,8 +11,8 @@ namespace EA::Audio::BasicSynth
 
 enum class OSCOptions
 {
-    Sine,
     Square,
+    Sine,
     Saw,
     ReversedSaw,
     WhiteNoise
@@ -21,12 +21,12 @@ enum class OSCOptions
 struct OscillatorList
 {
     Generators::WhiteNoise noise;
-    Generators::Sine sine;
-    Generators::Square square;
-    Generators::Saw saw;
-    Generators::ReverseSaw reversedSaw;
+    Generators::Table<Generators::Sine> sine;
+    Generators::Table<Generators::Square> square;
+    Generators::Table<Generators::Saw> saw;
+    Generators::Table<Generators::ReverseSaw> reversedSaw;
 
-    OSCOptions selected = OSCOptions::Sine;
+    OSCOptions selected = OSCOptions::Square;
 };
 
 struct FilterParams
@@ -67,4 +67,4 @@ struct Synth : MPESynth<Voice>
     BasicSynthShared shared;
 };
 
-} // namespace EA::Audio
+} // namespace EA::Audio::BasicSynth
