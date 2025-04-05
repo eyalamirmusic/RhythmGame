@@ -27,7 +27,6 @@ bool isLinux()
 #else
     return false;
 #endif
-
 }
 
 bool isMobile()
@@ -41,10 +40,6 @@ bool isMobile()
 
 bool isStandalone()
 {
-#if JUCE_STANDALONE_APPLICATION
-    return true;
-#else
-    return false;
-#endif
+    return juce::JUCEApplicationBase::isStandaloneApp();
 }
 } // namespace EA::Platform

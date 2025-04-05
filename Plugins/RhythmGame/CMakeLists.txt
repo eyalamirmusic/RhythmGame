@@ -10,7 +10,7 @@ juce_add_plugin("${BaseTargetName}"
         BUNDLE_ID "com.eyalamir.rhythmgame"
         IS_SYNTH TRUE
         NEEDS_MIDI_INPUT TRUE
-        NEEDS_MIDI_OUTPUT FALSE
+        NEEDS_MIDI_OUTPUT TRUE
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
         COPY_PLUGIN_AFTER_BUILD TRUE
