@@ -37,6 +37,9 @@ struct TimeRange
 
 struct TimedNote
 {
+    Note* operator->() { return &note; }
+    const Note* operator->() const { return &note; }
+
     Note note;
     TimeRange time;
 };
@@ -44,8 +47,9 @@ struct TimedNote
 struct Sequence
 {
     Sequence() = default;
-    Sequence(const MidiMessageSequence& seq, double timeFormat);
+    Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse);
 
+    double time = 0.0;
     std::atomic<double> pos = 0.0;
     Vector<TimedNote> notes;
 };

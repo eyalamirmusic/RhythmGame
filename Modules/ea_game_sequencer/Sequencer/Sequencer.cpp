@@ -24,7 +24,8 @@ MidiMessage Note::toNoteOff() const noexcept
     return MidiMessage::noteOff(channel, noteNum, velocity);
 }
 
-Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat)
+Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse)
+    : time(timeToUse)
 {
     for (auto& midiNote: seq)
     {
@@ -55,14 +56,15 @@ Player::Player(const File& file)
     {
         midiFile.readFrom(*stream);
         sequenceTime = midiFile.getLastTimestamp() / midiFile.getTimeFormat();
-    }
 
-    for (int track = 0; track < midiFile.getNumTracks(); ++track)
-    {
-        auto sequence = makeOwned<Sequence>(*midiFile.getTrack(track), midiFile.getTimeFormat());
+        for (int track = 0; track < midiFile.getNumTracks(); ++track)
+        {
+            auto sequence = makeOwned<Sequence>(
+                *midiFile.getTrack(track), midiFile.getTimeFormat(), sequenceTime);
 
-        if (!sequence->notes.empty())
-            sequences.add(std::move(sequence));
+            if (!sequence->notes.empty())
+                sequences.add(std::move(sequence));
+        }
     }
 }
 

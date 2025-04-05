@@ -9,6 +9,7 @@ Editor::Editor(DSP::Processor& processorToUse)
 {
     addAndMakeVisible(seq);
     addAndMakeVisible(genericEditor);
+    setResizable(true, true);
     setSize(400, 300);
 }
 

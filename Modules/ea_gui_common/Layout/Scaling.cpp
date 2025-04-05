@@ -22,16 +22,6 @@ static AffineTransform getRectTransform(const Rectangle<float>& source,
     return transform;
 }
 
-template <typename T>
-static Rectangle<T> scaleRect(const Rectangle<T>& source, const Rectangle<T>& ratio)
-{
-    auto newWidth = source.getWidth() * ratio.getWidth();
-    auto newHeight = source.getHeight() * ratio.getHeight();
-    auto newX = source.getX() + (ratio.getX() * source.getWidth());
-    auto newY = source.getY() + (ratio.getY() * source.getHeight());
-
-    return {newX, newY, newWidth, newHeight};
-}
 
 static void setTransformedBounds(Component& comp, const Rectangle<float>& bounds)
 {
@@ -60,6 +50,16 @@ static void scale(Component& comp,
     auto scaledBounds = scaleRect(boundsSource, boundsRatio);
 
     setTransformedBounds(comp, scaledBounds);
+}
+
+Rectangle<float> scaleRect(const Rectangle<float>& source, const Rectangle<float>& ratio)
+{
+    auto newWidth = source.getWidth() * ratio.getWidth();
+    auto newHeight = source.getHeight() * ratio.getHeight();
+    auto newX = source.getX() + (ratio.getX() * source.getWidth());
+    auto newY = source.getY() + (ratio.getY() * source.getHeight());
+
+    return {newX, newY, newWidth, newHeight};
 }
 
 void scale(Component& comp, const Rectangle<float>& boundsRatio)
