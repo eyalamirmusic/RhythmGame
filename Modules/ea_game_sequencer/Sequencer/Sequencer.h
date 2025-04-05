@@ -40,6 +40,7 @@ struct TimedNote
     Note* operator->() { return &note; }
     const Note* operator->() const { return &note; }
 
+    std::atomic<bool> playing {false};
     Note note;
     TimeRange time;
 };
@@ -53,7 +54,7 @@ struct Sequence
 
     double time = 0.0;
     std::atomic<double> pos = 0.0;
-    Vector<TimedNote> notes;
+    Vector<std::shared_ptr<TimedNote>> notes;
 };
 
 struct Player
@@ -64,6 +65,6 @@ struct Player
 
     double sequenceTime = 0.0;
     OwnedVector<Sequence> sequences;
-    Vector<TimedNote> playingNotes;
+    Vector<std::shared_ptr<TimedNote>> playingNotes;
 };
 } // namespace EA::Sequencer

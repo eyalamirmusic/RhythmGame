@@ -36,11 +36,11 @@ Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat, double tim
             auto start = getTime(m, timeFormat);
             auto end = getTime(midiNote->noteOffObject->message, timeFormat);
 
-            auto note = TimedNote();
-            note.time.start = start;
-            note.time.length = end - start;
+            auto note = std::make_shared<TimedNote>();
+            note->time.start = start;
+            note->time.length = end - start;
 
-            note.note = Note(m);
+            note->note = Note(m);
             notes.push_back(note);
         }
     }
@@ -50,12 +50,12 @@ juce::Range<int> Sequence::getNoteRange() const
     if (notes.empty())
         return {};
 
-    int lowest = notes[0]->noteNum;
-    int highest = notes[0]->noteNum;
+    int lowest = notes[0]->note.noteNum;
+    int highest = notes[0]->note.noteNum;
 
     for (auto& note: notes)
     {
-        auto noteNum = note->noteNum;
+        auto noteNum = note->note.noteNum;
 
         if (noteNum < lowest)
             lowest = noteNum;
@@ -94,7 +94,7 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
     if (!transport.playing)
     {
         for (auto& note: playingNotes)
-            midi.addEvent(note.note.toNoteOff(), 0);
+            midi.addEvent(note->note.toNoteOff(), 0);
 
         playingNotes.clear();
 
@@ -109,9 +109,10 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
         {
             auto& note = playingNotes[index];
 
-            if (!note.time.intersects(pos))
+            if (!note->time.intersects(pos))
             {
-                midi.addEvent(note.note.toNoteOff(), 0);
+                midi.addEvent(note->note.toNoteOff(), 0);
+                note->playing.store(false);
                 playingNotes.removeAt(index);
             }
         }
@@ -120,12 +121,13 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
         {
             for (auto& note: sequence->notes)
             {
-                auto& time = note.time;
+                auto& time = note->time;
 
                 if (pos.contains(time.start))
                 {
+                    note->playing.store(true);
                     playingNotes.add(note);
-                    midi.addEvent(note.note.toNoteOn(), sample);
+                    midi.addEvent(note->note.toNoteOn(), sample);
                 }
             }
 

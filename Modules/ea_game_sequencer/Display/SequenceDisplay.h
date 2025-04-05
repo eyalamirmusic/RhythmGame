@@ -17,27 +17,35 @@ struct SequenceDisplay : Component
     {
     }
 
+    static Colour getNoteColor(const Sequencer::TimedNote& note)
+    {
+        if (note.playing.load())
+            return Colours::red;
+
+        return Colours::blue;
+    }
+
     void paint(Graphics& g) override
     {
         auto bounds = getLocalBounds().toFloat();
 
         for (auto& note: seq.notes)
         {
-            auto& time = note.time;
+            auto& time = note->time;
 
             auto x = float(time.start / seq.time);
             auto w = float(time.length / seq.time);
 
             auto range = seq.getNoteRange();
-            auto rangeLength = (float)range.getLength();
+            auto rangeLength = (float) range.getLength();
 
-            auto y = float( note->noteNum - range.getStart()) / rangeLength;
+            auto y = float(note->note.noteNum - range.getStart()) / rangeLength;
             auto h = 1.f / rangeLength;
             y = 1.f - y - h;
 
             auto scaledRect = Scaling::scaleRect(bounds, {x, y, w, h});
 
-            g.setColour(Colours::blue);
+            g.setColour(getNoteColor(*note));
             g.fillRect(scaledRect);
 
             g.setColour(Colours::white);
@@ -68,7 +76,9 @@ struct ScrollingSequence : Component
     void update()
     {
         auto pos = seq.pos.load();
-        auto x = pos * (float) display.getBounds().getWidth();
+        auto width = display.getBounds().getWidth();
+        auto x = pos * (float) width;
+        x -= (float)getWidth() / 2.f;
 
         viewPort.setViewPosition((int) x, 0);
     }
