@@ -27,8 +27,13 @@ struct SequenceDisplay : Component
 
             auto x = float(time.start / seq.time);
             auto w = float(time.length / seq.time);
-            auto y = (float) note->noteNum / 128.f;
-            auto h = 1.f / 128.f;
+
+            auto range = seq.getNoteRange();
+            auto rangeLength = (float)range.getLength();
+
+            auto y = float( note->noteNum - range.getStart()) / rangeLength;
+            auto h = 1.f / rangeLength;
+            y = 1.f - y - h;
 
             auto scaledRect = Scaling::scaleRect(bounds, {x, y, w, h});
 

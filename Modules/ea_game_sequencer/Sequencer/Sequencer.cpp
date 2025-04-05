@@ -45,6 +45,27 @@ Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat, double tim
         }
     }
 }
+juce::Range<int> Sequence::getNoteRange() const
+{
+    if (notes.empty())
+        return {};
+
+    int lowest = notes[0]->noteNum;
+    int highest = notes[0]->noteNum;
+
+    for (auto& note: notes)
+    {
+        auto noteNum = note->noteNum;
+
+        if (noteNum < lowest)
+            lowest = noteNum;
+
+        if (noteNum > highest)
+            highest = noteNum;
+    }
+
+    return {lowest, highest};
+}
 
 Player::Player(const File& file)
 {

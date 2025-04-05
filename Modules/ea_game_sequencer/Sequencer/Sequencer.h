@@ -49,6 +49,8 @@ struct Sequence
     Sequence() = default;
     Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse);
 
+    juce::Range<int> getNoteRange() const;
+
     double time = 0.0;
     std::atomic<double> pos = 0.0;
     Vector<TimedNote> notes;
