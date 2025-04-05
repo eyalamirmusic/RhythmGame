@@ -15,6 +15,7 @@ BasicSynthShared::BasicSynthShared()
 void Voice::noteStarted()
 {
     osc.reset();
+    gain = getCurrentlyPlayingNote().noteOnVelocity.asUnsignedFloat();
     adsr.setParameters(shared->adsr);
     adsr.noteOn();
 }
@@ -57,6 +58,7 @@ void Voice::process(Buffer& buffer) noexcept
     }
 
     filter.process(buffer, shared->filter.cutoff, shared->filter.reso);
+    buffer.applyGain(gain);
     adsr.applyEnvelopeToBuffer(buffer, 0, buffer.getNumSamples());
 
     if (!adsr.isActive())
@@ -69,7 +71,7 @@ void Voice::prepare(int numChannels, double sr, int block)
     filter.prepare(numChannels, sr, block);
 }
 
-Synth::Synth()
+Synth::Synth(): MPESynth(256)
 {
     for (auto& voice: synthVoices)
         voice->shared = &shared;

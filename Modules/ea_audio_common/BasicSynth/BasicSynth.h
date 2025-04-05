@@ -4,6 +4,7 @@
 #include "Oscillator.h"
 #include "Generators.h"
 #include "SVF.h"
+#include "../Buffers/SmoothGain.h"
 
 namespace EA::Audio::BasicSynth
 {
@@ -51,6 +52,8 @@ struct Voice : VoiceBase
     void prepare(int numChannels, double sr, int block);
 
     BasicSynthShared* shared = nullptr;
+
+    float gain = 0.f;
 
     Filters::SVF filter;
     juce::ADSR adsr;

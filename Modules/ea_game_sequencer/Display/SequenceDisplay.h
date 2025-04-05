@@ -50,12 +50,17 @@ struct SequenceDisplay : Component
             notes.create(*note, seq);
     }
 
+    static float getNoteAlpha(const Sequencer::TimedNote& note)
+    {
+        return juce::jmap(note->velocity, 0.3f, 1.f);
+    }
+
     static Colour getNoteColor(const Sequencer::TimedNote& note)
     {
         if (note.playing.load())
             return Colours::red;
 
-        return Colours::blue;
+        return Colours::blue.withAlpha(getNoteAlpha(note));
     }
 
     void resized() override
@@ -127,9 +132,9 @@ struct ScrollingSequences : Component
 {
     ScrollingSequences(Sequencer::Player& playerToUse)
     {
-        for (auto& sequence: playerToUse.sequences)
+        for (int index = 0; index < 2; ++index)
         {
-            sequences.createNew(*sequence);
+            sequences.createNew(*playerToUse.sequences[index]);
             addAndMakeVisible(sequences.back());
         }
     }
