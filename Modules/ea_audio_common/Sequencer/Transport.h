@@ -6,13 +6,11 @@ namespace EA::Audio
 {
 struct Transport
 {
-    using Range = juce::Range<double>;
-
     void prepare(double srToUse, int blockSize);
     void process(int numSamples) noexcept;
     void process(const juce::AudioPlayHead* ph, int numSamples) noexcept;
 
-    Range getRange() const noexcept;
+    TimeRange getRange() const noexcept;
 
     int getNumSamples() const noexcept;
 
@@ -22,6 +20,6 @@ struct Transport
     double pos = 0.0;
     double sr = 0.0;
 
-    Vector<Range> positions;
+    Vector<TimeRange> positions;
 };
 } // namespace EA::Audio

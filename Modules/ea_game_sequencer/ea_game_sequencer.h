@@ -18,3 +18,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 
 #include "Sequencer/Sequencer.h"
 #include "Display/SequenceDisplay.h"
+#include "Display/CPUUsage.h"

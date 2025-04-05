@@ -26,11 +26,10 @@ void Transport::process(int numSamples) noexcept
 
     auto offset = getPPQPerSample(sr, bpm);
 
-    for (int sample = 0; sample < numSamples; ++sample)
+    for (auto& nextPos: positions)
     {
-        auto end = pos + offset;
-        positions[sample] = {pos, end};
-        pos = end;
+        nextPos = {pos, offset};
+        pos = nextPos.getEnd();
     }
 }
 void Transport::process(const juce::AudioPlayHead* ph, int numSamples) noexcept
@@ -52,9 +51,9 @@ void Transport::process(const juce::AudioPlayHead* ph, int numSamples) noexcept
     process(numSamples);
 }
 
-Transport::Range Transport::getRange() const noexcept
+TimeRange Transport::getRange() const noexcept
 {
-    return {positions[0].getStart(), positions.back().getEnd()};
+    return TimeRange::withStartEnd(positions[0].start, positions.back().getEnd());
 }
 
 int Transport::getNumSamples() const noexcept

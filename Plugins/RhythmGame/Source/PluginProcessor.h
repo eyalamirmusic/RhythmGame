@@ -17,6 +17,8 @@ public:
 
     AudioProcessorEditor* createEditor() override;
 
+    juce::AudioProcessLoadMeasurer measurer;
+
     Parameters params;
 
     SmoothGain gain;

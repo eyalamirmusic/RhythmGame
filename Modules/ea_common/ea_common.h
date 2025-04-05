@@ -19,3 +19,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 #include "Common/Platform.h"
 #include "Events/Timer.h"
 #include "Files/Files.h"
+#include "Helpers/TimeRange.h"

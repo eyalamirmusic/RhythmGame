@@ -18,6 +18,7 @@ private:
     DSP::Processor& plugin;
 
     BasicWindow<juce::GenericAudioProcessorEditor> genericEditor {"Controls", plugin};
+    BasicWindow<CPUUsage> usage {"CPU", plugin.measurer};
     ScrollingSequences seq {plugin.player};
 
     // juce::GenericAudioProcessorEditor editor {processor};

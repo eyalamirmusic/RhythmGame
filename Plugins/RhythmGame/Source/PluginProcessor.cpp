@@ -15,11 +15,15 @@ void Processor::prepareToPlay(double sampleRate, int samplesPerBlock)
     transport.bpm = 200.0;
     transport.prepare(sampleRate, samplesPerBlock);
     transport.playing = true;
+    measurer.reset(sampleRate, samplesPerBlock);
 }
 
 void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 
 {
+    auto timer =
+        juce::AudioProcessLoadMeasurer::ScopedTimer(measurer, buffer.getNumSamples());
+
     auto noDenormals = juce::ScopedNoDenormals();
     buffer.clear();
     midiMessages.clear();

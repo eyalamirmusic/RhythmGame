@@ -21,20 +21,6 @@ struct Note
     float velocity = 0.f;
 };
 
-struct TimeRange
-{
-    bool intersects(const juce::Range<double>& other) const noexcept
-    {
-        return other.intersects(getRange());
-    }
-
-    juce::Range<double> getRange() const noexcept { return {start, getEnd()}; }
-    double getEnd() const noexcept { return start + length; }
-
-    double start = 0.0;
-    double length = 0.0;
-};
-
 struct TimedNote
 {
     Note* operator->() { return &note; }
