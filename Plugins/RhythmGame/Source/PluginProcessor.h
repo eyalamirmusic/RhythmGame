@@ -17,14 +17,12 @@ public:
 
     AudioProcessorEditor* createEditor() override;
 
-    juce::AudioProcessLoadMeasurer measurer;
-
     Parameters params;
 
     SmoothGain gain;
     BasicSynth::Synth synth;
     Transport transport;
-    Sequencer::MultiSequence seq {Files::getDesktop() / "MIDI" / "rush_e_real.mid"};
+    Sequencer::MultiSequence seq;
     Sequencer::MultiPlayer player;
 };
 

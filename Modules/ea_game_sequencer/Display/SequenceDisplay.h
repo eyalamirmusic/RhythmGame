@@ -22,7 +22,7 @@ struct StructDisplayInfo
         auto w = float(time.length / seq.duration);
 
         auto range = seq.getNoteRange();
-        auto rangeLength = (float) range.getLength();
+        auto rangeLength = (float) range.getLength() + 1;
 
         auto y = float(note->note.noteNum - range.getStart()) / rangeLength;
         auto h = 1.f / rangeLength;
@@ -132,9 +132,9 @@ struct ScrollingSequences : Component
 {
     ScrollingSequences(Sequencer::MultiSequence& playerToUse)
     {
-        for (int index = 0; index < 2; ++index)
+        for (auto& seq: playerToUse.sequences)
         {
-            sequences.createNew(*playerToUse.sequences[index]);
+            sequences.createNew(*seq);
             addAndMakeVisible(sequences.back());
         }
     }

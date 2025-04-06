@@ -11,24 +11,38 @@ using juce::MidiMessageSequence;
 struct Note
 {
     Note() = default;
+    Note(int noteNumToUse, float velocityToUse = 0.8f, int channelToUse = 1)
+        : noteNum(noteNumToUse)
+        , velocity(velocityToUse)
+        , channel(channelToUse)
+    {
+    }
+
     Note(const MidiMessage& message) noexcept;
 
     MidiMessage toNoteOn() const noexcept;
     MidiMessage toNoteOff() const noexcept;
 
-    int channel = 0;
     int noteNum = 0;
-    float velocity = 0.f;
+    float velocity = 0.8f;
+    int channel = 1;
 };
 
 struct TimedNote
 {
+    TimedNote() = default;
+    TimedNote(const Note& noteToUse, const TimeRange& timeToUse)
+        : note(noteToUse)
+        , time(timeToUse)
+    {
+    }
+
     Note* operator->() { return &note; }
     const Note* operator->() const { return &note; }
 
-    std::atomic<bool> playing {false};
+    CopyableAtomic<bool> playing {false};
     Note note;
-    TimeRange time;
+    TimeRange time {};
 };
 
 using SharedNote = std::shared_ptr<TimedNote>;
@@ -39,6 +53,11 @@ struct Sequence
     Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse);
 
     juce::Range<int> getNoteRange() const;
+
+    TimedNote& create(const TimedNote& newNote = {})
+    {
+        return *notes.create(std::make_shared<TimedNote>(newNote));
+    }
 
     double duration = 0.0;
     std::atomic<double> pos = 0.0;
