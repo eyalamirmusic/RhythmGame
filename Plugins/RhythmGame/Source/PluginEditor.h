@@ -18,7 +18,9 @@ private:
     DSP::Processor& plugin;
 
     BasicWindow<juce::GenericAudioProcessorEditor> genericEditor {"Controls", plugin};
-    ScrollingSequences seq {plugin.seq};
+    ScrollingSequences seq {plugin.seq, plugin.userScore};
+    KeyboardHandling handling {*plugin.seq.sequences[0], plugin.userScore};
+    ScoreDisplay score {plugin.userScore};
 
     // juce::GenericAudioProcessorEditor editor {processor};
 };

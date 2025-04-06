@@ -5,6 +5,7 @@
 
 namespace EA::Audio::Plugins::RhythmGame
 {
+
 class Processor : public ProcessorBase
 {
 public:
@@ -15,6 +16,7 @@ public:
 
     juce::AudioPlayHead* getActivePlayhead() const;
 
+
     AudioProcessorEditor* createEditor() override;
 
     Parameters params;
@@ -24,6 +26,8 @@ public:
     Transport transport;
     Sequencer::MultiSequence seq;
     Sequencer::MultiPlayer player;
+    Sequencer::UserScore userScore;
+
 };
 
 } // namespace EA::Audio::Plugins::RhythmGame

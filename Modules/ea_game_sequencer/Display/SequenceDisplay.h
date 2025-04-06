@@ -41,6 +41,34 @@ struct StructDisplayInfo
     Rectangle<float> scaledRect;
 };
 
+struct UserNote : Component
+{
+    void paint(Graphics& g) override { g.fillAll(Colours::green); }
+};
+
+struct UserHitArea : Component
+{
+    UserHitArea(Sequencer::Sequence& seqToUse, Sequencer::UserScore& userScoreToUse)
+        : seq(seqToUse)
+        , userScore(userScoreToUse)
+    {
+        addAndMakeVisible(userNote);
+    }
+
+    void onTimer()
+    {
+        auto width = float(1.0 / seq.duration);
+        auto relativeTime = float(userScore.userActionPos);
+        Scaling::scale(userNote, {relativeTime, 0.f, width, 1.f});
+    }
+
+    Sequencer::Sequence& seq;
+    Sequencer::UserScore& userScore;
+
+    UserNote userNote;
+    Events::Timer timer {[&] { onTimer(); }};
+};
+
 struct SequenceDisplay : Component
 {
     SequenceDisplay(Sequencer::Sequence& seqToUse)
@@ -88,15 +116,37 @@ struct SequenceDisplay : Component
 
     Sequencer::Sequence& seq;
     Vector<StructDisplayInfo> notes;
+
     Events::Timer timer {[&] { repaint(); }};
+};
+
+struct ScrollableArea : Component
+{
+    ScrollableArea(Sequencer::Sequence& seqToUse, Sequencer::UserScore& scoreToUse)
+        : display(seqToUse)
+        , userHitArea(seqToUse, scoreToUse)
+    {
+        addAndMakeVisible(display);
+        addAndMakeVisible(userHitArea);
+    }
+
+    void resized() override
+    {
+        Scaling::scale(userHitArea, {0.f, 0.f, 1.f, 0.2f});
+        Scaling::scale(display, {0.f, 0.2f, 1.f, 0.8f});
+    }
+
+    SequenceDisplay display;
+    UserHitArea userHitArea;
 };
 
 struct ScrollingSequence : Component
 {
-    ScrollingSequence(Sequencer::Sequence& seqToUse)
+    ScrollingSequence(Sequencer::Sequence& seqToUse, Sequencer::UserScore& scoreToUse)
         : seq(seqToUse)
+        , area(seqToUse, scoreToUse)
     {
-        viewPort.setViewedComponent(&display, false);
+        viewPort.setViewedComponent(&area, false);
         viewPort.setScrollBarsShown(false, false);
         addAndMakeVisible(viewPort);
     }
@@ -105,7 +155,7 @@ struct ScrollingSequence : Component
     {
         viewPort.setScrollBarsShown(false, false);
         auto numBars = int(std::ceil(seq.duration / 4.0));
-        display.setBounds(0, 0, getWidth() * numBars, getHeight());
+        area.setBounds(0, 0, getWidth() * numBars, getHeight());
         viewPort.setBounds(getLocalBounds());
 
         update();
@@ -114,7 +164,7 @@ struct ScrollingSequence : Component
     void update()
     {
         auto pos = seq.pos.load();
-        auto width = display.getBounds().getWidth();
+        auto width = area.getBounds().getWidth();
         auto x = pos * (float) width;
         x -= (float) getWidth() / 2.f;
 
@@ -122,7 +172,7 @@ struct ScrollingSequence : Component
     }
 
     Sequencer::Sequence& seq;
-    SequenceDisplay display {seq};
+    ScrollableArea area;
     Viewport viewPort;
 
     Events::Timer timer {[&] { update(); }};
@@ -130,11 +180,13 @@ struct ScrollingSequence : Component
 
 struct ScrollingSequences : Component
 {
-    ScrollingSequences(Sequencer::MultiSequence& playerToUse)
+    ScrollingSequences(Sequencer::MultiSequence& playerToUse, Sequencer::UserScore& score)
     {
+        setInterceptsMouseClicks(false, false);
+
         for (auto& seq: playerToUse.sequences)
         {
-            sequences.createNew(*seq);
+            sequences.createNew(*seq, score);
             addAndMakeVisible(sequences.back());
         }
     }
@@ -142,5 +194,49 @@ struct ScrollingSequences : Component
     void resized() override { Scaling::resizeVertically(*this); }
 
     OwnedVector<ScrollingSequence> sequences;
+};
+
+struct ScoreDisplay : Component
+{
+    ScoreDisplay(Sequencer::UserScore& scoreToUse)
+        : score(scoreToUse)
+    {
+        text.setJustificationType(juce::Justification::centred);
+        text.setFont(juce::FontOptions(20.f));
+        addAndMakeVisible(text);
+    }
+
+    void resized() override { text.setBounds(getLocalBounds()); }
+
+    void update() { text.setText(String(score.score), juce::dontSendNotification); }
+
+    Sequencer::UserScore& score;
+    juce::Label text;
+    Events::Timer timer {[&] { update(); }};
+};
+
+struct KeyboardHandling : Component
+{
+    KeyboardHandling(Sequencer::Sequence& seqToUse, Sequencer::UserScore& scoreToUse)
+        : seq(seqToUse)
+        , score(scoreToUse)
+    {
+        setWantsKeyboardFocus(true);
+    }
+
+    void visibilityChanged() override
+    {
+        if (isShowing())
+            grabKeyboardFocus();
+    }
+
+    bool keyPressed(const juce::KeyPress&) override
+    {
+        score.userNote(seq);
+        return true;
+    }
+
+    Sequencer::Sequence& seq;
+    Sequencer::UserScore& score;
 };
 } // namespace EA::GUI

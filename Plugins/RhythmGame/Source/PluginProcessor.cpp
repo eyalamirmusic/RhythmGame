@@ -14,14 +14,14 @@ Processor::Processor()
 
     auto note = Sequencer::TimedNote();
     auto start = 0.0;
-    note.time.length = 0.5;
+    note.time.length = 1.0;
 
     for (int index = 0; index < 64; ++index)
     {
         note->noteNum = 42;
 
         note.time.start = start;
-        start += 1.0;
+        start += 2.0;
 
         newSeq.create(note);
     }
@@ -44,7 +44,6 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     midiMessages.clear();
 
     transport.process(getActivePlayhead(), buffer.getNumSamples());
-
     player.process(seq, midiMessages, transport);
 
     synth.shared.filter.cutoff = params.cutoff->get();
