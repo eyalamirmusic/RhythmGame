@@ -19,7 +19,7 @@ private:
 
     BasicWindow<juce::GenericAudioProcessorEditor> genericEditor {"Controls", plugin};
     BasicWindow<CPUUsage> usage {"CPU", plugin.measurer};
-    ScrollingSequences seq {plugin.player};
+    ScrollingSequences seq {plugin.seq};
 
     // juce::GenericAudioProcessorEditor editor {processor};
 };

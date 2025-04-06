@@ -25,7 +25,7 @@ MidiMessage Note::toNoteOff() const noexcept
 }
 
 Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse)
-    : time(timeToUse)
+    : duration(timeToUse)
 {
     for (auto& midiNote: seq)
     {
@@ -67,11 +67,8 @@ juce::Range<int> Sequence::getNoteRange() const
     return {lowest, highest};
 }
 
-Player::Player(const File& file)
+MultiSequence::MultiSequence(const File& file)
 {
-    playingNotes.reserve(1000);
-    possibleNotes.reserve(1000);
-
     auto midiFile = juce::MidiFile();
 
     if (auto stream = file.createInputStream())
@@ -90,7 +87,15 @@ Player::Player(const File& file)
     }
 }
 
-void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexcept
+Player::Player()
+{
+    playingNotes.reserve(1000);
+    possibleNotes.reserve(1000);
+}
+
+void Player::process(Sequence& seq,
+                     MidiBuffer& midi,
+                     const Audio::Transport& transport) noexcept
 {
     if (!transport.playing)
     {
@@ -106,13 +111,10 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
 
     possibleNotes.clear();
 
-    for (auto& seq: sequences)
+    for (auto& note: seq.notes)
     {
-        for (auto& note: seq->notes)
-        {
-            if (note->time.intersects(fullRange))
-                possibleNotes.add(note);
-        }
+        if (note->time.intersects(fullRange))
+            possibleNotes.add(note);
     }
 
     for (int sample = 0; sample < transport.getNumSamples(); ++sample)
@@ -142,7 +144,6 @@ void Player::process(MidiBuffer& midi, const Audio::Transport& transport) noexce
         }
     }
 
-    for (auto& seq: sequences)
-        seq->pos.store(fullRange.getEnd() / sequenceTime);
+    seq.pos.store(fullRange.getEnd() / seq.duration);
 }
 } // namespace EA::Sequencer

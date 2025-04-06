@@ -24,7 +24,8 @@ public:
     SmoothGain gain;
     BasicSynth::Synth synth;
     Transport transport;
-    Sequencer::Player player {Files::getDesktop() / "MIDI" / "rush_e_real.mid"};
+    Sequencer::MultiSequence seq {Files::getDesktop() / "MIDI" / "rush_e_real.mid"};
+    Sequencer::MultiPlayer player;
 };
 
 } // namespace EA::Audio::Plugins::RhythmGame

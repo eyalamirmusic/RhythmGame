@@ -18,8 +18,8 @@ struct StructDisplayInfo
     {
         auto& time = note->time;
 
-        auto x = float(time.start / seq.time);
-        auto w = float(time.length / seq.time);
+        auto x = float(time.start / seq.duration);
+        auto w = float(time.length / seq.duration);
 
         auto range = seq.getNoteRange();
         auto rangeLength = (float) range.getLength();
@@ -104,7 +104,7 @@ struct ScrollingSequence : Component
     void resized() override
     {
         viewPort.setScrollBarsShown(false, false);
-        auto numBars = int(std::ceil(seq.time / 4.0));
+        auto numBars = int(std::ceil(seq.duration / 4.0));
         display.setBounds(0, 0, getWidth() * numBars, getHeight());
         viewPort.setBounds(getLocalBounds());
 
@@ -130,7 +130,7 @@ struct ScrollingSequence : Component
 
 struct ScrollingSequences : Component
 {
-    ScrollingSequences(Sequencer::Player& playerToUse)
+    ScrollingSequences(Sequencer::MultiSequence& playerToUse)
     {
         for (int index = 0; index < 2; ++index)
         {

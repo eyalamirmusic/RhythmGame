@@ -30,7 +30,7 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
 
     transport.process(getActivePlayhead(), buffer.getNumSamples());
 
-    player.process(midiMessages, transport);
+    player.process(seq, midiMessages, transport);
 
     synth.shared.filter.cutoff = params.cutoff->get();
     synth.shared.filter.reso = params.reso->get();

@@ -31,6 +31,8 @@ struct TimedNote
     TimeRange time;
 };
 
+using SharedNote = std::shared_ptr<TimedNote>;
+
 struct Sequence
 {
     Sequence() = default;
@@ -38,20 +40,44 @@ struct Sequence
 
     juce::Range<int> getNoteRange() const;
 
-    double time = 0.0;
+    double duration = 0.0;
     std::atomic<double> pos = 0.0;
-    Vector<std::shared_ptr<TimedNote>> notes;
+    Vector<SharedNote> notes;
+};
+
+struct MultiSequence
+{
+    MultiSequence() = default;
+
+    MultiSequence(const File& file);
+
+    double sequenceTime = 0.0;
+    OwnedVector<Sequence> sequences;
 };
 
 struct Player
 {
-    Player(const File& file);
+    Player();
 
-    void process(MidiBuffer& midi, const Audio::Transport& transport) noexcept;
+    void process(Sequence& sequence,
+                 MidiBuffer& midi,
+                 const Audio::Transport& transport) noexcept;
 
-    double sequenceTime = 0.0;
-    OwnedVector<Sequence> sequences;
-    Vector<std::shared_ptr<TimedNote>> playingNotes;
-    Vector<std::shared_ptr<TimedNote>> possibleNotes;
+    Vector<SharedNote> playingNotes;
+    Vector<SharedNote> possibleNotes;
 };
+
+struct MultiPlayer
+{
+    MultiPlayer(int maxPlayers = 16) { players.resize(maxPlayers); }
+
+    void process(MultiSequence& seq, MidiBuffer& midi, const Audio::Transport& transport)
+    {
+        for (int index = 0; index < seq.sequences.size(); ++index)
+            players[index].process(*seq.sequences[index], midi, transport);
+    }
+
+    Vector<Player> players;
+};
+
 } // namespace EA::Sequencer
