@@ -7,85 +7,6 @@ static double getTime(const MidiMessage& message, double timeFormat)
     return message.getTimeStamp() / timeFormat;
 }
 
-Note::Note(const MidiMessage& message) noexcept
-{
-    channel = message.getChannel();
-    noteNum = message.getNoteNumber();
-    velocity = message.getFloatVelocity();
-}
-
-MidiMessage Note::toNoteOn() const noexcept
-{
-    return MidiMessage::noteOn(channel, noteNum, velocity);
-}
-
-MidiMessage Note::toNoteOff() const noexcept
-{
-    return MidiMessage::noteOff(channel, noteNum, velocity);
-}
-
-Sequence::Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse)
-    : duration(timeToUse)
-{
-    for (auto& midiNote: seq)
-    {
-        auto& m = midiNote->message;
-
-        if (m.isNoteOn())
-        {
-            auto start = getTime(m, timeFormat);
-            auto end = getTime(midiNote->noteOffObject->message, timeFormat);
-
-            auto note = std::make_shared<TimedNote>();
-            note->time.start = start;
-            note->time.length = end - start;
-
-            note->note = Note(m);
-            notes.push_back(note);
-        }
-    }
-}
-juce::Range<int> Sequence::getNoteRange() const
-{
-    if (notes.empty())
-        return {};
-
-    int lowest = notes[0]->note.noteNum;
-    int highest = notes[0]->note.noteNum;
-
-    for (auto& note: notes)
-    {
-        auto noteNum = note->note.noteNum;
-
-        if (noteNum < lowest)
-            lowest = noteNum;
-
-        if (noteNum > highest)
-            highest = noteNum;
-    }
-
-    return {lowest, highest};
-}
-
-MultiSequence::MultiSequence(const File& file)
-{
-    auto midiFile = juce::MidiFile();
-
-    if (auto stream = file.createInputStream())
-    {
-        midiFile.readFrom(*stream);
-        sequenceTime = midiFile.getLastTimestamp() / midiFile.getTimeFormat();
-
-        for (int track = 0; track < midiFile.getNumTracks(); ++track)
-        {
-            auto sequence = makeOwned<Sequence>(
-                *midiFile.getTrack(track), midiFile.getTimeFormat(), sequenceTime);
-
-            if (!sequence->notes.empty())
-                sequences.add(std::move(sequence));
-        }
-    }
-}
 
 Player::Player()
 {
@@ -145,5 +66,18 @@ void Player::process(Sequence& seq,
     }
 
     seq.pos.store(fullRange.getEnd() / seq.duration);
+}
+
+MultiPlayer::MultiPlayer(int maxPlayers)
+{
+    players.resize(maxPlayers);
+}
+
+void MultiPlayer::process(MultiSequence& seq,
+                          MidiBuffer& midi,
+                          const Audio::Transport& transport)
+{
+    for (int index = 0; index < seq.sequences.size(); ++index)
+        players[index].process(*seq.sequences[index], midi, transport);
 }
 } // namespace EA::Sequencer

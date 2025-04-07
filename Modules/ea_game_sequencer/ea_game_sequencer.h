@@ -17,5 +17,7 @@ BEGIN_JUCE_MODULE_DECLARATION
 #endif
 
 #include "Sequencer/Sequencer.h"
+#include "Sequencer/UserScore.h"
+
 #include "Display/SequenceDisplay.h"
 #include "Display/CPUUsage.h"
