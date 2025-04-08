@@ -7,8 +7,8 @@ Processor::Processor()
 {
     params.addTo(*this);
 
-    seq.sequenceTime = 16.0;
-    auto& newSeq = seq.sequences.createNew();
+    state.multiSeq.sequenceTime = 16.0;
+    auto& newSeq = state.multiSeq.sequences.createNew();
 
     newSeq.duration = 16.0;
 
@@ -44,7 +44,7 @@ void Processor::processBlock(Buffer& buffer, MidiBuffer& midiMessages)
     midiMessages.clear();
 
     transport.process(getActivePlayhead(), buffer.getNumSamples());
-    player.process(seq, midiMessages, transport);
+    player.process(state.multiSeq, midiMessages, transport);
 
     synth.shared.filter.cutoff = params.cutoff->get();
     synth.shared.filter.reso = params.reso->get();

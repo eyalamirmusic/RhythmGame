@@ -48,22 +48,20 @@ struct UserNote : Component
 
 struct UserHitArea : Component
 {
-    UserHitArea(Sequencer::Sequence& seqToUse, Sequencer::UserScore& userScoreToUse)
-        : seq(seqToUse)
-        , userScore(userScoreToUse)
+    UserHitArea(Sequencer::GameState& stateToUse)
+        : state(stateToUse)
     {
         addAndMakeVisible(userNote);
     }
 
     void onTimer()
     {
-        auto width = float(1.0 / seq.duration);
-        auto relativeTime = float(userScore.userActionPos);
+        auto width = float(1.0 / state.getActiveSequence().duration);
+        auto relativeTime = float(state.score.userActionPos);
         Scaling::scale(userNote, {relativeTime, 0.f, width, 1.f});
     }
 
-    Sequencer::Sequence& seq;
-    Sequencer::UserScore& userScore;
+    Sequencer::GameState& state;
 
     UserNote userNote;
     Events::Timer timer {[&] { onTimer(); }};
@@ -122,9 +120,9 @@ struct SequenceDisplay : Component
 
 struct ScrollableArea : Component
 {
-    ScrollableArea(Sequencer::Sequence& seqToUse, Sequencer::UserScore& scoreToUse)
-        : display(seqToUse)
-        , userHitArea(seqToUse, scoreToUse)
+    ScrollableArea(Sequencer::GameState& state, int index)
+        : display(*state.multiSeq.sequences[index])
+        , userHitArea(state)
     {
         addAndMakeVisible(display);
         addAndMakeVisible(userHitArea);
@@ -142,9 +140,9 @@ struct ScrollableArea : Component
 
 struct ScrollingSequence : Component
 {
-    ScrollingSequence(Sequencer::Sequence& seqToUse, Sequencer::UserScore& scoreToUse)
-        : seq(seqToUse)
-        , area(seqToUse, scoreToUse)
+    ScrollingSequence(Sequencer::GameState& stateToUse, int indexToUse)
+        : state(stateToUse)
+        , index(indexToUse)
     {
         viewPort.setViewedComponent(&area, false);
         viewPort.setScrollBarsShown(false, false);
@@ -154,7 +152,7 @@ struct ScrollingSequence : Component
     void resized() override
     {
         viewPort.setScrollBarsShown(false, false);
-        auto numBars = int(std::ceil(seq.duration / 4.0));
+        auto numBars = int(std::ceil(getSeq().duration / 4.0));
         area.setBounds(0, 0, getWidth() * numBars, getHeight());
         viewPort.setBounds(getLocalBounds());
 
@@ -163,7 +161,7 @@ struct ScrollingSequence : Component
 
     void update()
     {
-        auto pos = seq.pos.load();
+        auto pos = getSeq().pos.load();
         auto width = area.getBounds().getWidth();
         auto x = pos * (float) width;
         x -= (float) getWidth() / 2.f;
@@ -171,8 +169,12 @@ struct ScrollingSequence : Component
         viewPort.setViewPosition((int) x, 0);
     }
 
-    Sequencer::Sequence& seq;
-    ScrollableArea area;
+    Sequencer::Sequence& getSeq() const { return *state.multiSeq.sequences[index]; }
+
+    Sequencer::GameState& state;
+    int index;
+
+    ScrollableArea area {state, index};
     Viewport viewPort;
 
     Events::Timer timer {[&] { update(); }};
@@ -180,13 +182,13 @@ struct ScrollingSequence : Component
 
 struct ScrollingSequences : Component
 {
-    ScrollingSequences(Sequencer::MultiSequence& playerToUse, Sequencer::UserScore& score)
+    ScrollingSequences(Sequencer::GameState& state)
     {
         setInterceptsMouseClicks(false, false);
 
-        for (auto& seq: playerToUse.sequences)
+        for (int index = 0; index < state.multiSeq.sequences.size(); ++index)
         {
-            sequences.createNew(*seq, score);
+            sequences.createNew(state, index);
             addAndMakeVisible(sequences.back());
         }
     }
@@ -217,9 +219,8 @@ struct ScoreDisplay : Component
 
 struct KeyboardHandling : Component
 {
-    KeyboardHandling(Sequencer::Sequence& seqToUse, Sequencer::UserScore& scoreToUse)
-        : seq(seqToUse)
-        , score(scoreToUse)
+    KeyboardHandling(Sequencer::GameState& stateToUse)
+        : state(stateToUse)
     {
         setWantsKeyboardFocus(true);
     }
@@ -232,11 +233,10 @@ struct KeyboardHandling : Component
 
     bool keyPressed(const juce::KeyPress&) override
     {
-        score.userNote(seq);
+        state.userNote();
         return true;
     }
 
-    Sequencer::Sequence& seq;
-    Sequencer::UserScore& score;
+    Sequencer::GameState& state;
 };
 } // namespace EA::GUI

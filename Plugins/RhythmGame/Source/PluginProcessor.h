@@ -24,9 +24,9 @@ public:
     SmoothGain gain;
     BasicSynth::Synth synth;
     Transport transport;
-    Sequencer::MultiSequence seq;
+
+    Sequencer::GameState state;
     Sequencer::MultiPlayer player;
-    Sequencer::UserScore userScore;
 
 };
 
