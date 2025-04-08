@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ea_gui_common/ea_gui_common.h>
-#include "../Sequencer/Sequencer.h"
+#include "../Sequencer/UserScore.h"
 
 namespace EA::GUI
 {
@@ -161,7 +161,7 @@ struct ScrollingSequence : Component
 
     void update()
     {
-        auto pos = getSeq().pos.load();
+        auto pos = getSeq().getRelativePos();
         auto width = area.getBounds().getWidth();
         auto x = pos * (float) width;
         x -= (float) getWidth() / 2.f;

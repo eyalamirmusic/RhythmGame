@@ -4,6 +4,14 @@
 
 namespace EA::Sequencer
 {
+static TimeRange getPlayRange(const TimedNote& note)
+{
+    auto range = note.time;
+    range.start-= 0.125;
+    range.length = 0.25;
+
+    return range;
+}
 
 struct UserScore
 {
@@ -17,8 +25,14 @@ struct UserScore
         {
             if (note->playing.load() && !playedNotes.contains(note))
             {
-                playedNotes.add(note);
-                success = true;
+                auto range = getPlayRange(*note);
+
+                if (range.contains(userActionPos))
+                {
+                    playedNotes.add(note);
+                    success = true;
+                }
+
             }
         }
 

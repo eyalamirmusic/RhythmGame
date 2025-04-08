@@ -65,7 +65,7 @@ void Player::process(Sequence& seq,
         }
     }
 
-    seq.pos.store(fullRange.getEnd() / seq.duration);
+    seq.pos.store(fullRange.getEnd());
 }
 
 MultiPlayer::MultiPlayer(int maxPlayers)

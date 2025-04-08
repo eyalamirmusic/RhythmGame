@@ -10,6 +10,7 @@ struct Sequence
     Sequence(const MidiMessageSequence& seq, double timeFormat, double timeToUse);
 
     juce::Range<int> getNoteRange() const;
+    double getRelativePos() const { return pos.load() / duration; }
 
     TimedNote& create(const TimedNote& newNote = {});
 
